@@ -55,7 +55,7 @@ export const Environment: IEnvironment = {
       +process.env.JWT_ACCOUNT_VERIFICATON_SECRET_EXPIRATION_TIME,
   },
   DB: {
-    URL: process.env.DB_URL,
+    URL: process.env.DATABASE_URL,
   },
   PAYSTACK: {
     SECRET: process.env.PAYSTACK_SECRET,
