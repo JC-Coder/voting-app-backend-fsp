@@ -1,7 +1,6 @@
 import {
   IsNotEmpty,
   IsNumberString,
-  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -27,24 +26,3 @@ export class CreateCandidateDto {
   position: string;
 }
 
-export class UpdateCandidateDto {
-  @IsOptional()
-  @IsString()
-  fullname: string;
-
-  @IsOptional()
-  @IsString()
-  course: string;
-
-  @IsOptional()
-  @IsNumberString()
-  level: number;
-
-  @IsOptional()
-  @IsString()
-  manifestoe: string;
-
-  @IsOptional()
-  @IsString()
-  position: string;
-}
