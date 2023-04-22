@@ -1,9 +1,7 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -102,6 +100,16 @@ export class UserService {
       const user = await this.findById(id);
 
       return new ResponseMessage(true, user);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async getAllUsers(): Promise<IResponseMessage> {
+    try {
+      const users = await this.userModel.find();
+
+      return new ResponseMessage(true, users, 'record fetched successfully');
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

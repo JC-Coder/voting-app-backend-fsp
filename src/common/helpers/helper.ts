@@ -29,4 +29,9 @@ export const helperFunction = {
   generateRandomNumber(length: number) {
     return Math.random().toString().substr(2, length);
   },
+
+  isValidImage(filename: string) {
+    var regex = /\.(jpg|jpeg|png|gif|svg)$/i;
+    return regex.test(filename);
+  },
 };
