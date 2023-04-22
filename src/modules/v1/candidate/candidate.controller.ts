@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -72,5 +73,11 @@ export class CandidateController {
     @UploadedFile() image: Express.Multer.File,
   ) {
     return await this.candidateService.updateCandidate(id, payload, image);
+  }
+
+  @Delete(':id')
+  @Roles('admin')
+  async deleteCandidate(@Param('id') id: string) {
+    return await this.candidateService.deleteCandidate(id);
   }
 }

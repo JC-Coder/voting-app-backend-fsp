@@ -22,6 +22,9 @@ export class Candidate {
 
   @Prop()
   image: string;
+
+  @Prop({ default: 0 })
+  votes: number;
 }
 
 export const CandidateSchema = SchemaFactory.createForClass(Candidate);

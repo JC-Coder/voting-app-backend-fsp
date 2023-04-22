@@ -114,4 +114,14 @@ export class CandidateService {
       throw new InternalServerErrorException(e.message);
     }
   }
+
+  async deleteCandidate(id: string): Promise<IResponseMessage> {
+    try {
+      await this.candidateModel.deleteOne({ id });
+
+      return new ResponseMessage(true, null, 'record deleted successfully');
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
 }
