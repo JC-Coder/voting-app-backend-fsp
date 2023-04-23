@@ -183,25 +183,26 @@ export class CandidateService {
     }
   }
 
-  async getTopCandidates(): Promise<any> {
+  async getTopCandidates(): Promise<IResponseMessage> {
     try {
       const candidates = await this.candidateModel.find();
 
       const highestScoringCandidates = [];
       const positions = [...new Set(candidates.map((c) => c.position))];
 
-      const filter = candidates.sort((a, b) => b.votes - a.votes);
-      console.log(filter);
-
       positions.forEach((position) => {
         highestScoringCandidates.push(
           candidates
             .filter((c) => c.position === position)
             .sort((a, b) => b.votes - a.votes)[0],
-        ); 
+        );
       });
 
-      return highestScoringCandidates;
+      return new ResponseMessage(
+        true,
+        highestScoringCandidates,
+        'record fetched successfully',
+      );
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
