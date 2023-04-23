@@ -7,18 +7,20 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { Roles } from 'src/common/decorators';
+import { ILoggedInUser, LoggedInUser, Roles } from 'src/common/decorators';
 import { helperFunction } from 'src/common/helpers/helper';
 import { CandidateService } from './candidate.service';
 import { CreateCandidateDto } from './dtos/create-candidate.dto';
 import * as path from 'path';
 import { Request } from 'express';
 import { UpdateCandidateDto } from './dtos/update-candidate.dto';
+import { IResponseMessage } from 'src/common/constants/response';
 
 @Controller('candidate')
 export class CandidateController {
@@ -28,6 +30,13 @@ export class CandidateController {
   @Get()
   async getCandidates() {
     return await this.candidateService.getCandidates();
+  }
+
+  @Get('position')
+  async getCandidateByPosition(
+    @Query('position') position: string,
+  ): Promise<IResponseMessage> {
+    return await this.candidateService.getCandidateByPosition(position);
   }
 
   @Roles('admin')
@@ -79,5 +88,13 @@ export class CandidateController {
   @Roles('admin')
   async deleteCandidate(@Param('id') id: string) {
     return await this.candidateService.deleteCandidate(id);
+  }
+
+  @Post('vote/:id')
+  async voteCandidate(
+    @Param('id') id: string,
+    @LoggedInUser() user: ILoggedInUser,
+  ) {
+    return await this.candidateService.voteCandidate(id, user.userId);
   }
 }

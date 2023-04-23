@@ -114,4 +114,16 @@ export class UserService {
       throw new InternalServerErrorException(e.message);
     }
   }
+
+  async updateUserVotes(userId: string, position: string) {
+    try {
+      const user = await this.findById(userId);
+      if (!user) return;
+
+      user.votedPositions.push(position);
+      await user.save();
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
 }

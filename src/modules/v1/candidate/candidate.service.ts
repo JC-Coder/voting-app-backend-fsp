@@ -10,17 +10,35 @@ import { CreateCandidateDto } from './dtos/create-candidate.dto';
 import { Candidate, CandidateDocument } from './schema/candidate.schema';
 import { helperFunction } from 'src/common/helpers/helper';
 import { UpdateCandidateDto } from './dtos/update-candidate.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class CandidateService {
   constructor(
     @InjectModel(Candidate.name)
     private candidateModel: Model<CandidateDocument>,
+    private userService: UserService,
   ) {}
 
   async getCandidates(): Promise<IResponseMessage> {
     try {
       const candidates = await this.candidateModel.find();
+
+      return new ResponseMessage(
+        true,
+        candidates,
+        'record fetched successfully',
+      );
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async getCandidateByPosition(position: string): Promise<IResponseMessage> {
+    try {
+      const candidates = await this.candidateModel.find({
+        position,
+      });
 
       return new ResponseMessage(
         true,
@@ -120,6 +138,40 @@ export class CandidateService {
       await this.candidateModel.deleteOne({ id });
 
       return new ResponseMessage(true, null, 'record deleted successfully');
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async voteCandidate(
+    candidateId: string,
+    userId: string,
+  ): Promise<IResponseMessage | any> {
+    try {
+      console.log(candidateId, userId);
+      const candidate = await this.candidateModel.findOne({ _id: candidateId });
+
+      if (!candidate) {
+        return new ResponseMessage(false, null, 'invalid candidate id');
+      }
+
+      const user = await this.userService.findById(userId);
+
+      const voted = user.votedPositions.includes(candidate.position);
+
+      if (voted) {
+        return new ResponseMessage(
+          false,
+          null,
+          'user already voted for a candidate in this category',
+        );
+      }
+
+      candidate.votes += 1;
+      await candidate.save();
+      await this.userService.updateUserVotes(userId, candidate.position);
+
+      return new ResponseMessage(true, null, 'record updated successfully');
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

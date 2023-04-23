@@ -26,6 +26,9 @@ export class User {
 
   @Prop({ required: true })
   matricNo: string;
+
+  @Prop()
+  votedPositions: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

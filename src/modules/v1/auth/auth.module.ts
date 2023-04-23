@@ -12,7 +12,7 @@ import { OtpModule } from '../otp/otp.module';
     UserModule,
     JwtModule.register({
       secret: Environment.JWT.SECRET,
-      signOptions: { expiresIn: `24h` },
+      signOptions: { expiresIn: `3d` },
     }),
   ],
   controllers: [AuthController],
