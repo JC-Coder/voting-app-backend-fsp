@@ -27,8 +27,8 @@ export class CandidateController {
   constructor(private readonly candidateService: CandidateService) {}
 
   @Get()
-  async getCandidates(@LoggedInUser() user: ILoggedInUser) {
-    return await this.candidateService.getCandidates(user.role);
+  async getCandidates() {
+    return await this.candidateService.getCandidates();
   }
 
   @Get('position')

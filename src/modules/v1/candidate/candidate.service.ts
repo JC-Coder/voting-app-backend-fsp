@@ -20,16 +20,9 @@ export class CandidateService {
     private userService: UserService,
   ) {}
 
-  async getCandidates(role: string): Promise<IResponseMessage> {
+  async getCandidates(): Promise<IResponseMessage> {
     try {
-      let candidates: any;
-      console.log(role);
-
-      if (role === 'user') {
-        candidates = await this.candidateModel.find().sort({ votes: -1 });
-      } else {
-        candidates = await this.candidateModel.find();
-      }
+      let candidates = await this.candidateModel.find();
 
       return new ResponseMessage(
         true,
