@@ -26,10 +26,9 @@ import { IResponseMessage } from 'src/common/constants/response';
 export class CandidateController {
   constructor(private readonly candidateService: CandidateService) {}
 
-  @Roles('admin')
   @Get()
-  async getCandidates() {
-    return await this.candidateService.getCandidates();
+  async getCandidates(@LoggedInUser() user: ILoggedInUser) {
+    return await this.candidateService.getCandidates(user.role);
   }
 
   @Get('position')
@@ -96,5 +95,10 @@ export class CandidateController {
     @LoggedInUser() user: ILoggedInUser,
   ) {
     return await this.candidateService.voteCandidate(id, user.userId);
+  }
+
+  @Get('top')
+  async getTopCandidates() {
+    return await this.candidateService.getTopCandidates();
   }
 }

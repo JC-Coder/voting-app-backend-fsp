@@ -20,9 +20,16 @@ export class CandidateService {
     private userService: UserService,
   ) {}
 
-  async getCandidates(): Promise<IResponseMessage> {
+  async getCandidates(role: string): Promise<IResponseMessage> {
     try {
-      const candidates = await this.candidateModel.find();
+      let candidates: any;
+      console.log(role);
+
+      if (role === 'user') {
+        candidates = await this.candidateModel.find().sort({ votes: -1 });
+      } else {
+        candidates = await this.candidateModel.find();
+      }
 
       return new ResponseMessage(
         true,
@@ -146,9 +153,8 @@ export class CandidateService {
   async voteCandidate(
     candidateId: string,
     userId: string,
-  ): Promise<IResponseMessage | any> {
+  ): Promise<IResponseMessage> {
     try {
-      console.log(candidateId, userId);
       const candidate = await this.candidateModel.findOne({ _id: candidateId });
 
       if (!candidate) {
@@ -172,6 +178,30 @@ export class CandidateService {
       await this.userService.updateUserVotes(userId, candidate.position);
 
       return new ResponseMessage(true, null, 'record updated successfully');
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  async getTopCandidates(): Promise<any> {
+    try {
+      const candidates = await this.candidateModel.find();
+
+      const highestScoringCandidates = [];
+      const positions = [...new Set(candidates.map((c) => c.position))];
+
+      const filter = candidates.sort((a, b) => b.votes - a.votes);
+      console.log(filter);
+
+      positions.forEach((position) => {
+        highestScoringCandidates.push(
+          candidates
+            .filter((c) => c.position === position)
+            .sort((a, b) => b.votes - a.votes)[0],
+        ); 
+      });
+
+      return highestScoringCandidates;
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
