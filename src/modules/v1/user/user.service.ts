@@ -40,9 +40,9 @@ export class UserService {
     }
   }
 
-  async generateLoginPassword(id: string): Promise<void> {
+  async generateLoginPassword(email: string): Promise<void> {
     try {
-      const user = await this.findById(id);
+      const user = await this.findByEmail(email);
       if (!user) {
         throw new NotFoundException('No user found with provided id');
       }
@@ -52,7 +52,7 @@ export class UserService {
       const expiresIn = new Date(date.getTime() + 5 * 60000);
 
       await this.userModel.updateOne(
-        { id },
+        { email },
         { loginPassword, loginPasswordExpiresIn: expiresIn },
       );
 

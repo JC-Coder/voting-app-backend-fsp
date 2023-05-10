@@ -65,7 +65,7 @@ export class AuthService {
       }
 
       // generate login password
-      await this.userService.generateLoginPassword(user.id);
+      await this.userService.generateLoginPassword(user.email);
 
       return new ResponseMessage(
         true,
@@ -93,8 +93,8 @@ export class AuthService {
       if (currentDate.getTime() > expiresIn.getTime()) {
         throw new BadRequestException('Login password expired');
       }
-      
-      await this.userService.deleteUserLoginPassword(user.id)
+
+      await this.userService.deleteUserLoginPassword(user.id);
 
       const jwtPayload = { sub: user._id, role: user.role };
 
