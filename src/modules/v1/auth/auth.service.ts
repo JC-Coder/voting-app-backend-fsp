@@ -8,13 +8,14 @@ import {
   IResponseMessage,
   ResponseMessage,
 } from 'src/common/constants/response';
-import { helperFunction } from 'src/common/helpers/helper';
-import { OtpService } from '../otp/otp.service';
 import { User } from '../user/schema/user.schema';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RequestLoginPasswordDto } from './dtos/request-login-password.dto';
+import { AdminSignupDto } from './dtos/adminSignupDto';
+import { AdminLoginDto } from './dtos/adminLoginDto';
+import { Environment } from 'src/common/configs/environment';
 
 @Injectable()
 export class AuthService {
@@ -95,6 +96,63 @@ export class AuthService {
       }
 
       await this.userService.deleteUserLoginPassword(user.id);
+
+      const jwtPayload = { sub: user._id, role: user.role };
+
+      return new ResponseMessage(
+        true,
+        {
+          user,
+          token: this.jwtService.sign(jwtPayload),
+        },
+        'Login Successful',
+      );
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
+  async adminSignup(payload: AdminSignupDto) {
+    try {
+      const { email, password, confirmPassword, adminSecret } = payload;
+
+      if (password !== confirmPassword) {
+        return new ResponseMessage(
+          false,
+          null,
+          'password and confirm password must match',
+        );
+      }
+
+      if (adminSecret !== Environment.APP.ADMIN_SIGNUP_SECRET) {
+        return new ResponseMessage(false, null, 'Invalid admin secret');
+      }
+
+      let user = await this.userService.findByEmail(email);
+
+      if (user) {
+        return new ResponseMessage(
+          false,
+          null,
+          'user with provided email already exist',
+        );
+      }
+
+      user = await this.userService.createAdmin({ ...payload, role: 'admin' });
+      return new ResponseMessage(true, user, 'Admin Registration Successful');
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
+  async adminLogin(payload: AdminLoginDto) {
+    try {
+      const { email, password } = payload;
+
+      const user = await this.userService.getUserByEmailAndPassword(
+        email,
+        password,
+      );
 
       const jwtPayload = { sub: user._id, role: user.role };
 

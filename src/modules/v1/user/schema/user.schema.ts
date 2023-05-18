@@ -29,6 +29,9 @@ export class User {
 
   @Prop()
   votedPositions: string[];
+
+  @Prop({ required: true, default: null })
+  password: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

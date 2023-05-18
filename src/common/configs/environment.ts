@@ -6,6 +6,7 @@ interface IEnvironment {
     NAME: string;
     PORT: number | string;
     ADMIN_EMAIL: string;
+    ADMIN_SIGNUP_SECRET: string;
   };
   GOOGLE: {
     CLIENT_ID: string;
@@ -36,6 +37,7 @@ export const Environment: IEnvironment = {
     NAME: process.env.NAME,
     PORT: process.env.PORT,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    ADMIN_SIGNUP_SECRET: process.env.ADMIN_SIGNUP_SECRET,
   },
   GOOGLE: {
     CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

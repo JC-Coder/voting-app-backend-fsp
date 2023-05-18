@@ -12,6 +12,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { LoginDto } from './dtos/login.dto';
 import { RequestLoginPasswordDto } from './dtos/request-login-password.dto';
+import { AdminSignupDto } from './dtos/adminSignupDto';
+import { AdminLoginDto } from './dtos/adminLoginDto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,5 +35,17 @@ export class AuthController {
   @Post('login')
   async login(@Body() payload: LoginDto): Promise<any> {
     return await this.authService.login(payload);
+  }
+
+  @Public()
+  @Post('admin/signup')
+  async adminSignup(@Body() payload: AdminSignupDto) {
+    return await this.authService.adminSignup(payload);
+  }
+
+  @Public()
+  @Post('admin/login')
+  async adminLogin(@Body() payload: AdminLoginDto) {
+    return await this.authService.adminLogin(payload);
   }
 }

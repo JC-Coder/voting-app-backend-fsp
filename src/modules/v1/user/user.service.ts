@@ -12,6 +12,7 @@ import {
 import { helperFunction } from 'src/common/helpers/helper';
 import { MailService } from '../mail/mail.service';
 import { User, UserDocument } from './schema/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -91,8 +92,33 @@ export class UserService {
     }
   }
 
+  async getUserByEmailAndPassword(email: string, password: string) {
+    try {
+      const user = await this.userModel.findOne({ email });
+
+      if (!user)
+        throw new NotFoundException('No user found with provided email');
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) throw new NotFoundException('Invalid password');
+
+      delete user['_doc']['password'];
+      return user;
+    } catch (err) {
+      throw new InternalServerErrorException(err.message);
+    }
+  }
+
   async createUser(payload: any): Promise<UserDocument> {
     return await this.userModel.create(payload);
+  }
+
+  async createAdmin(payload: any): Promise<UserDocument> {
+    return await this.userModel.create({
+      ...payload,
+      matricNo: 'admin',
+      password: await bcrypt.hash(payload.password, 10),
+    });
   }
 
   async getProfile(id: string): Promise<IResponseMessage> {
