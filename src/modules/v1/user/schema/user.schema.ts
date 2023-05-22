@@ -30,7 +30,7 @@ export class User {
   @Prop()
   votedPositions: string[];
 
-  @Prop({ required: true, default: null })
+  @Prop({ required: false, default: null })
   password: string;
 }
 
