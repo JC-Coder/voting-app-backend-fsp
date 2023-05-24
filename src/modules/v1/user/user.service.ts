@@ -30,7 +30,7 @@ export class UserService {
   }
 
   async findById(id: string): Promise<UserDocument> {
-    return await this.userModel.findOne({ id });
+    return await this.userModel.findById(id);
   }
 
   async findByLoginPassword(password: string): Promise<UserDocument> {
