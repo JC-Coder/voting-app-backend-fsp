@@ -137,6 +137,11 @@ export class CandidateService {
     try {
       await this.candidateModel.deleteOne({ id });
 
+      const candidatesCount = await this.candidateModel.countDocuments();
+      if(candidatesCount === 0) {
+        await this.userService.resetUsersVotes();
+      }
+
       return new ResponseMessage(true, null, 'record deleted successfully');
     } catch (e) {
       throw new InternalServerErrorException(e.message);

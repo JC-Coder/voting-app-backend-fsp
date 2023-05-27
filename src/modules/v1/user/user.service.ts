@@ -152,4 +152,12 @@ export class UserService {
       throw new InternalServerErrorException(e.message);
     }
   }
+
+  async resetUsersVotes() {
+    try {
+      await this.userModel.updateMany({}, { votedPositions: [] });
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
 }
