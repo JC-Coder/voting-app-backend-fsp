@@ -22,7 +22,7 @@ export class CandidateService {
 
   async getCandidates(): Promise<IResponseMessage> {
     try {
-      let candidates = await this.candidateModel.find();
+      let candidates = await this.candidateModel.find().sort({votes: -1});
 
       return new ResponseMessage(
         true,
